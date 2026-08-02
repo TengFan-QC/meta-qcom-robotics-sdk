@@ -7,7 +7,7 @@ repos:
     branch: main
   meta-qcom:
     url: https://github.com/qualcomm-linux/meta-qcom
-    commit: d2dda53767a99880287691c2d8ea1e1dd6f81ae2
+    commit: 9597e0b079869aba57d6febc06a0484e1c4f8dde
   oe-core:
     url: https://github.com/openembedded/openembedded-core
     layers:
@@ -16,16 +16,16 @@ repos:
       fix-BSD-license-missing:
         repo: meta-qcom-robotics-sdk
         path: patches/Initial-commit-of-license.patch
-    commit: 31edc0b82a3dc7b1dd0338da4a8d0d8f5a1dc138
+    commit: 62d2381bdee1cebb5924f8594f8a9994083d4f7d
   bitbake:
     url: https://github.com/openembedded/bitbake
     layers:
       .: disabled
-    commit: 797b0a348d7426d03459e577feacd3488fdeee47
+    commit: 3a99c26fa581d70ed67bd08a5e0e0d0b18369a7c
   meta-qcom-distro:
     url: https://github.com/qualcomm-linux/meta-qcom-distro
     branch: main
-    commit: e3a82c893760632b89ad0918265ab2bf82f2ed8a
+    commit: 5a9bc8bf794cd857ad1986d4c73341ad98b42c48
   meta-openembedded:
     url: https://github.com/openembedded/meta-openembedded
     layers:
@@ -36,7 +36,7 @@ repos:
       meta-oe:
       meta-python:
       meta-xfce:
-    commit: 39321ae90b64e8f2bd890a2957a5f80e74d4de30
+    commit: dc0ccaa27311b3379749ecf44f98c0b5e249902e
   meta-virtualization:
     url: https://git.yoctoproject.org/meta-virtualization
     branch: master
@@ -44,15 +44,15 @@ repos:
   meta-audioreach:
     url: https://github.com/AudioReach/meta-audioreach
     branch: master
-    commit: c80ebf5be5cc47a1bab1acb4b1987c8cd8b48218
+    commit: b5a382aba0e5b1e4cfbd9f36256ea46e0d4cf002
   meta-selinux:
     branch: master
     url: https://git.yoctoproject.org/meta-selinux
-    commit: 1c30b4eddcef9e0594dd15c15e1f675e2a0c93a2
+    commit: 7351443c6579671bcf048817438f1740ad23eaab
   meta-updater:
     branch: master
     url: https://github.com/uptane/meta-updater
-    commit: f0e1ccafaa877d2781ed953236981dac57439dc8
+    commit: fff4a58a057c26ec0a2067ea5f32acd75ef7add4
   meta-security:
     url: https://git.yoctoproject.org/meta-security
     branch: master
