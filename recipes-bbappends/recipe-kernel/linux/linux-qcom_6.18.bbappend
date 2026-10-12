@@ -1,6 +1,6 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
 
-SRC_URI += "file://configs/robotics-kernel.cfg"
+SRC_URI:append = " file://configs/robotics-kernel.cfg"
 
 # do_configure:prepend:append() {
 #     #cat ${UNPACKDIR}/configs/robotics-kernel.cfg >> ${UNPACKDIR}/configs/qcom.cfg
