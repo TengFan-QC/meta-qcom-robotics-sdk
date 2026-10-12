@@ -270,7 +270,13 @@ do_generate_qirp_sdk[file-checksums] = " \
 # Add dependency on packagegroup RDEPENDS collection tasks
 python () {
     pn = d.getVar("PN")
-    
+
+    # Distros without the QIRP SDK dependencies (e.g. qcom-robotics-distro on the auto stack)
+    # set QIRP_SDK_ENABLED = "0" to skip the packagegroup/sample task deps.
+    if d.getVar("QIRP_SDK_ENABLED") != "1":
+        bb.note("QIRP SDK disabled for {}, skip packagegroup/sample dependencies".format(pn))
+        return
+
     # Check if this is a robotics image
     if pn in ["qcom-robotics-image", "qcom-robotics-proprietary-image"]:
         # Determine which packagegroups to depend on
