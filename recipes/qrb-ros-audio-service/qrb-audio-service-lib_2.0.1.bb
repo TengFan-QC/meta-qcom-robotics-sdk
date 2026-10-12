@@ -11,9 +11,9 @@ PV = "2.0.1"
 
 DEPENDS = "glog gflags"
 
-SRC_URI = "git://github.com/quic-qrb-ros/qrb_ros_audio_service.git;protocol=https;branch=stable/2.0.1"
+SRC_URI = "git://github.com/quic-qrb-ros/qrb_ros_audio_service.git;protocol=https;branch=dev/robot-iq10"
 
-SRCREV = "32c4bb2d38954f2671a1eba8cf85b01f437f2943"
+SRCREV = "${AUTOREV}"
 S = "${UNPACKDIR}/${BP}/qrb_audio_manager"
 
 DEPENDS += " \

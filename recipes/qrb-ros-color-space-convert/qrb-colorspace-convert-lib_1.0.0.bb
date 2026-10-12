@@ -38,8 +38,8 @@ DEPENDS += "${ROS_EXPORT_DEPENDS} ${ROS_BUILDTOOL_EXPORT_DEPENDS}"
 
 RDEPENDS:${PN} += "${ROS_EXEC_DEPENDS}"
 
-SRC_URI = "git://github.com/quic-qrb-ros/qrb_ros_color_space_convert.git;protocol=https;branch=stable/1.0.0-opengles"
-SRCREV = "e8af86baa9e55f0c196164bd5f0a574e134a0965"
+SRC_URI = "git://github.com/quic-qrb-ros/qrb_ros_color_space_convert.git;protocol=https;branch=dev/robot-iq10"
+SRCREV = "${AUTOREV}"
 S = "${UNPACKDIR}/${PN}-${PV}/qrb_colorspace_convert_lib"
 
 do_configure:prepend() {

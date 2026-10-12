@@ -49,6 +49,6 @@ DEPENDS += "${ROS_EXPORT_DEPENDS} ${ROS_BUILDTOOL_EXPORT_DEPENDS} ${ROS_TEST_DEP
 
 RDEPENDS:${PN} += "${ROS_EXEC_DEPENDS}"
 
-SRC_URI = "git://github.com/qualcomm-qrb-ros/qrb_ros_transport.git;protocol=https;branch=stable/1.3.0"
-SRCREV = "72642db004e4cf58208c72733dd8da6d74339d58"
+SRC_URI = "git://github.com/qualcomm-qrb-ros/qrb_ros_transport.git;protocol=https;branch=dev/robot-iq10"
+SRCREV = "${AUTOREV}"
 S = "${UNPACKDIR}/${PN}-${PV}/qrb_ros_transport_point_cloud2_type"

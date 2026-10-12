@@ -48,6 +48,6 @@ DEPENDS += "${ROS_EXPORT_DEPENDS} ${ROS_BUILDTOOL_EXPORT_DEPENDS} ${ROS_TEST_DEP
 
 RDEPENDS:${PN} += "${ROS_EXEC_DEPENDS}"
 
-SRC_URI = "git://github.com/qualcomm-qrb-ros/qrb_ros_system_monitor.git;protocol=https;branch=stable/1.1.1"
-SRCREV = "33adf837390c8f29b56c244e4e0394f15e88d9a2"
+SRC_URI = "git://github.com/qualcomm-qrb-ros/qrb_ros_system_monitor.git;protocol=https;branch=dev/robot-iq10"
+SRCREV = "${AUTOREV}"
 S = "${UNPACKDIR}/${PN}-${PV}/qrb_ros_system_monitor"
