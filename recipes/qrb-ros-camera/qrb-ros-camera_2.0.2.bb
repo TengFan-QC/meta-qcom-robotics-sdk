@@ -5,9 +5,9 @@ inherit pkgconfig cmake
 LICENSE  = "BSD-3-Clause"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/${LICENSE};md5=550794465ba0ec5312d6919e203a55f9"
 
-SRC_URI = "git://github.com/qualcomm-qrb-ros/qrb_ros_camera.git;protocol=https;branch=stable/2.0.2;subpath=qrb_ros_camera \
+SRC_URI = "git://github.com/qualcomm-qrb-ros/qrb_ros_camera.git;protocol=https;branch=dev/robot-iq10;subpath=qrb_ros_camera \
            file://0001-patch-update-for-qrb_ros_camera.patch"
-SRCREV = "5f88780ea9ef7c5df3d1c08899bdb89fbecbfab8"
+SRCREV = "${AUTOREV}"
 S = "${UNPACKDIR}/qrb_ros_camera"
 
 # Dependencies

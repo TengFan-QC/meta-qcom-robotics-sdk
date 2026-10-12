@@ -42,6 +42,6 @@ DEPENDS += "${ROS_EXPORT_DEPENDS} ${ROS_BUILDTOOL_EXPORT_DEPENDS} ${ROS_TEST_DEP
 
 RDEPENDS:${PN} += "${ROS_EXEC_DEPENDS}"
 
-SRC_URI = "git://github.com/qualcomm-qrb-ros/qrb_ros_imu.git;protocol=https;branch=stable/1.3.0"
-SRCREV = "f5341eb8eb015a7e46dc1300f5c34fc6c23bc1a7"
+SRC_URI = "git://github.com/qualcomm-qrb-ros/qrb_ros_imu.git;protocol=https;branch=dev/robot-iq10"
+SRCREV = "${AUTOREV}"
 S = "${UNPACKDIR}/${PN}-${PV}/qrb_sensor_client"

@@ -63,10 +63,10 @@ DEPENDS += "${ROS_EXPORT_DEPENDS} ${ROS_BUILDTOOL_EXPORT_DEPENDS} ${ROS_TEST_DEP
 
 RDEPENDS:${PN} += "${ROS_EXEC_DEPENDS}"
 
-SRC_URI = "git://github.com/quic-qrb-ros/qrb_ros_video.git;protocol=https;branch=stable/0.1.7 \
+SRC_URI = "git://github.com/quic-qrb-ros/qrb_ros_video.git;protocol=https;branch=dev/robot-iq10 \
            file://0002-fix-test-add-mp4-extension-fallback-when-discoverer-fail-29.patch;striplevel=2 \
            "
-SRCREV = "4cf038f0dec6154ae464c904cf7e7f24b125be7b"
+SRCREV = "${AUTOREV}"
 S = "${UNPACKDIR}/${BP}/qrb_ros_video"
 PV = "0.1.7"
 
