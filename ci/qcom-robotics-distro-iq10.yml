@@ -1,0 +1,59 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/siemens/kas/master/kas/schema-kas.json
+
+# Robotics image on top of the automotive stack (meta-qcom-auto/ci/
+# qcom-auto-distro.yml + qcom-auto-internal.yml) instead of meta-qcom-distro.
+# Colon-append to an auto machine pointer file, e.g.:
+#   kas build meta-qcom-robotics-sdk/ci/sa8797-ride-sx.yml:meta-qcom-robotics-sdk/ci/qcom-robotics-distro-iq10.yml
+header:
+  version: 14
+  includes:
+  - repo: meta-qcom-auto
+    file: ci/qcom-auto-distro.yml
+  - repo: meta-qcom-auto
+    file: ci/qcom-auto-internal.yml
+
+repos:
+  meta-qcom-auto:
+    path: meta-qcom-auto
+
+  meta-qcom-robotics-sdk:
+
+  oe-core:
+    patches:
+      fix-BSD-license-missing:
+        repo: meta-qcom-robotics-sdk
+        path: patches/Initial-commit-of-license.patch
+
+  meta-ros:
+    url: https://github.com/ros/meta-ros.git
+    branch: wrynose
+    commit: c671acf8a948e22a614a6d6d1dcf18bdf4113df5
+    layers:
+      meta-ros-common:
+      meta-ros2:
+      meta-ros2-jazzy:
+    patches:
+      qcom-fixes1:
+        repo: meta-qcom-robotics-sdk
+        path: patches/0001-jazzy-remove-outdated-bbappend-and-patches-of-stomp.patch
+      qcom-fixes2:
+        repo: meta-qcom-robotics-sdk
+        path: patches/0002-jazzy-update-libdir-of-ompl.patch
+      qcom-fixes3:
+        repo: meta-qcom-robotics-sdk
+        path: patches/0003-jazzy-move-some-nav2-and-moveit-packages-out-of-blac.patch
+      ament_cmake_py_fix:
+        repo: meta-qcom-robotics-sdk
+        path: patches/0001-ros2-ament_cmake-add-python-configurations-for-class.patch
+      remove-rosbag2-compressionn-zstd-bbappend:
+        repo: meta-qcom-robotics-sdk
+        path: patches/0001-fix-remove-bbappend-and-patch-for-rosbag2-compressio.patch
+
+local_conf_header:
+  assimp-preference: |
+    PREFERRED_VERSION_assimp = "5.4.0"
+
+distro: qcom-robotics-distro
+
+target:
+  - robotics-machine-image

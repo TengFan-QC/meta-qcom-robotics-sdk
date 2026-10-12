@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/siemens/kas/master/kas/schema-kas.json
+
+# Pointer file only - resolves meta-qcom-auto/ci/sa8797-ride-sx.yml in place
+# via kas's repo: include, since kas's colon-syntax refuses to merge config
+# files that live in different git repositories. Run from the workspace root:
+#   kas build meta-qcom-robotics-sdk/ci/sa8797-ride-sx-auto.yml:meta-qcom-robotics-sdk/ci/qcom-robotics-distro-iq10.yml
+header:
+  version: 14
+  includes:
+  - repo: meta-qcom-auto
+    file: ci/sa8797-ride-sx.yml
+
+repos:
+  # Explicit path: otherwise the url-less meta-qcom-auto entry in
+  # meta-qcom-auto/ci/base.yml would resolve to this (robotics) repo.
+  meta-qcom-auto:
+    path: meta-qcom-auto
