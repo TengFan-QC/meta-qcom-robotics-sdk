@@ -18,9 +18,20 @@
 # Typical usage:
 #   Used by robotics image recipes such as qcom-robotics-image to create a releasable QIRP SDK bundle.
 #
-TOOLCHAIN_PATH = "${DEPLOY_DIR}/sdk"
+TOOLCHAIN_PATH = "${SDK_DEPLOY}"
 SDK_PN = "qirp-sdk"
 SDK_VERSION = "2.8.0"
+
+# Packagegroups whose runtime packages go into the SDK. The defaults keep the
+# per-image behaviour; an image may set its own list. Packages not ready on a
+# stack are dropped from the packagegroups themselves (RDEPENDS:<pg>:remove in
+# the distro conf), so their .list files and the SDK follow automatically.
+QIRP_SDK_PACKAGEGROUPS ?= "packagegroup-robotics-opensource \
+    ${@'packagegroup-oss-with-prop-deps packagegroup-robotics-proprietary' if 'proprietary' in d.getVar('PN') else ''}"
+
+# Samples from content_config.json that are not packaged into the SDK, e.g.
+# samples not ready on a stack. Skipped both as task dependency and at copy time.
+QIRP_SDK_SAMPLES_EXCLUDE ?= ""
 
 # Collect the standard SDK toolchain and copy it into the SDK's toolchain/
 # directory. If no matching toolchain is found, the task only emits a warning.
@@ -68,6 +79,10 @@ process_qir_samples() {
     
     jq -c '.samples[]' $CONFIG_FILE | while read line; do
         name=$(echo $line | jq -r '.name')
+        if echo " ${QIRP_SDK_SAMPLES_EXCLUDE} " | grep -q " ${name} "; then
+            bbnote "  Skipping excluded sample: $name"
+            continue
+        fi
         ros_pkg_name=$(echo $line | jq -r '.name' | tr '-' '_')
         to_dir="${QIRP_SSTATE_IN_DIR}/${SDK_PN}/$(echo $line | jq -r '.to')"
 
@@ -138,19 +153,11 @@ process_runtime() {
         fi
     done
 
-    if echo "${PN}" | grep -q proprietary; then
-        # Proprietary image: three packagegroups
-        LIST_FILES=" \
-            ${ROBOTICS_PACKAGEGROUP_LIST_DIR}/packagegroup-robotics-opensource.list \
-            ${ROBOTICS_PACKAGEGROUP_LIST_DIR}/packagegroup-oss-with-prop-deps.list \
-            ${ROBOTICS_PACKAGEGROUP_LIST_DIR}/packagegroup-robotics-proprietary.list \
-        "
-        bbnote "Processing proprietary image with 3 packagegroup lists"
-    else
-        # Open-source image: one packagegroup
-        LIST_FILES="${ROBOTICS_PACKAGEGROUP_LIST_DIR}/packagegroup-robotics-opensource.list"
-        bbnote "Processing open-source image with 1 packagegroup list"
-    fi
+    LIST_FILES=""
+    for pg in ${QIRP_SDK_PACKAGEGROUPS}; do
+        LIST_FILES="${LIST_FILES} ${ROBOTICS_PACKAGEGROUP_LIST_DIR}/${pg}.list"
+    done
+    bbnote "Processing packagegroup lists: ${QIRP_SDK_PACKAGEGROUPS}"
     
     # Check if list files exist - exit with error if any are missing
     missing_files=""
@@ -271,26 +278,11 @@ do_generate_qirp_sdk[file-checksums] = " \
 python () {
     pn = d.getVar("PN")
 
-    # Distros without the QIRP SDK dependencies (e.g. qcom-robotics-distro on the auto stack)
-    # set QIRP_SDK_ENABLED = "0" to skip the packagegroup/sample task deps.
-    if d.getVar("QIRP_SDK_ENABLED") != "1":
-        bb.note("QIRP SDK disabled for {}, skip packagegroup/sample dependencies".format(pn))
-        return
-
-    # Check if this is a robotics image
-    if pn in ["qcom-robotics-image", "qcom-robotics-proprietary-image"]:
-        # Determine which packagegroups to depend on
-        if "proprietary" in pn:
-            pkg_groups = [
-                "packagegroup-robotics-opensource",
-                "packagegroup-oss-with-prop-deps",
-                "packagegroup-robotics-proprietary"
-            ]
-        else:
-            pkg_groups = ["packagegroup-robotics-opensource"]
-        
+    # Packagegroups to depend on come from QIRP_SDK_PACKAGEGROUPS (see top of
+    # this class); images without any are not robotics images.
+    pkg_groups = (d.getVar("QIRP_SDK_PACKAGEGROUPS") or "").split()
+    if pkg_groups:
         # Add dependencies
-        
         for pkg_group in pkg_groups:
             for task in ["do_generate_qirp_sdk", "do_populate_sdk", "do_populate_sdk_ext"]:
                 d.appendVarFlag(task, "depends",
@@ -316,6 +308,8 @@ python () {
                     config_data = json.load(f)
                 
                 samples = config_data.get("samples", [])
+                excluded = (d.getVar("QIRP_SDK_SAMPLES_EXCLUDE") or "").split()
+                samples = [s for s in samples if s.get("name") not in excluded]
                 sample_names = [sample.get("name") for sample in samples if sample.get("name")]
                 
                 if sample_names:
