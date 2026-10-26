@@ -10,6 +10,7 @@
 
 require recipes-products/images/machine-image.bb
 inherit rootfs-symlink
+inherit psdk-image
 
 DESCRIPTION = "Robotics image built on top of the automotive machine-image (machine-image.bb), \
 customized for the automotive platform. Adds ROS2 framework, open-source robotics packages, \
@@ -29,5 +30,14 @@ ROBOTICS_IMAGE_INSTALL = " \
 "
 
 IMAGE_INSTALL:append = " ${ROBOTICS_IMAGE_INSTALL}"
+
+# Runtime packages of these packagegroups are packed into the QIRP SDK
+# (bitbake robotics-machine-image -c generate_qirp_sdk). Not-ready packages are
+# already removed from the packagegroups by the distro conf.
+QIRP_SDK_PACKAGEGROUPS = " \
+    packagegroup-robotics-opensource \
+    packagegroup-oss-with-prop-deps \
+    packagegroup-robotics-proprietary \
+"
 
 ROOTFS_SYMLINK_PAIRS = "/usr/ros:/opt/ros"
