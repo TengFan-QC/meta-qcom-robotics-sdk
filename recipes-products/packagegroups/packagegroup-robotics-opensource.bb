@@ -66,6 +66,9 @@ EXTERNAL_OPENSOURCE = " \
     cartographer \
     cartographer-ros \
     nav2-bringup \
+    librealsense2 \
+    realsense2-camera-msgs \
+    realsense2-camera \
 "
 
 ROS_GST_BRIDGE = " \
