@@ -63,6 +63,7 @@ EXTERNAL_OPENSOURCE = " \
     rplidar-ros2 \
     orbbec-camera \
     xsens-mti-ros2-driver \
+    livox-ros-driver2 \
     cartographer \
     cartographer-ros \
     nav2-bringup \
