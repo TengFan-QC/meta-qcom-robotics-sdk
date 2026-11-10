@@ -120,3 +120,4 @@ S = "${UNPACKDIR}/realsense-ros/realsense2_camera"
 ROS_BUILD_TYPE = "ament_cmake"
 
 inherit ros_${ROS_BUILD_TYPE}
+SECURITY_STRINGFORMAT = ""
