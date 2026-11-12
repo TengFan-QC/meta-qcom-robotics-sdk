@@ -3,6 +3,7 @@
 # Robotics image on top of the automotive stack (meta-qcom-auto/ci/
 # qcom-auto-distro.yml + qcom-auto-internal.yml) instead of meta-qcom-distro.
 # Colon-append to an auto machine pointer file, e.g.:
+#   kas build meta-qcom-robotics-sdk/ci/gen5-ride-sx.yml:meta-qcom-robotics-sdk/ci/qcom-robotics-distro-iq10.yml
 #   kas build meta-qcom-robotics-sdk/ci/sa8797-ride-sx.yml:meta-qcom-robotics-sdk/ci/qcom-robotics-distro-iq10.yml
 header:
   version: 14
