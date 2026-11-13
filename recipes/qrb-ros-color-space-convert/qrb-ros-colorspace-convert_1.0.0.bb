@@ -21,6 +21,7 @@ ROS_BUILD_DEPENDS = " \
     rclcpp \
     rclcpp-components \
     sensor-msgs \
+    std-msgs \
     qrb-colorspace-convert-lib \
     qrb-ros-transport-image-type \
 "
@@ -36,7 +37,10 @@ ROS_BUILDTOOL_EXPORT_DEPENDS = ""
 
 ROS_EXEC_DEPENDS = " \
     rclcpp \
+    rclcpp-components \
+    ros2launch \
     sensor-msgs \
+    std-msgs \
     qrb-colorspace-convert-lib \
     qrb-ros-transport-image-type \
 "
@@ -49,4 +53,3 @@ RDEPENDS:${PN} += "${ROS_EXEC_DEPENDS}"
 SRC_URI = "git://github.com/quic-qrb-ros/qrb_ros_color_space_convert.git;protocol=https;branch=dev/robot-iq10"
 SRCREV = "${AUTOREV}"
 S = "${UNPACKDIR}/${PN}-${PV}/qrb_ros_colorspace_convert"
-
