@@ -64,6 +64,7 @@ EXTERNAL_OPENSOURCE = " \
     orbbec-camera \
     xsens-mti-ros2-driver \
     livox-ros-driver2 \
+    ranger-ros2 \
     cartographer \
     cartographer-ros \
     nav2-bringup \
