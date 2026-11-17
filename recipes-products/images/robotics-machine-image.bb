@@ -26,6 +26,7 @@ ROBOTICS_IMAGE_INSTALL = " \
     packagegroup-robotics-opensource \
     packagegroup-oss-with-prop-deps \
     packagegroup-robotics-proprietary \
+    packagegroup-robotics-qcnode \
     qirp-sdk \
 "
 
@@ -38,6 +39,7 @@ QIRP_SDK_PACKAGEGROUPS = " \
     packagegroup-robotics-opensource \
     packagegroup-oss-with-prop-deps \
     packagegroup-robotics-proprietary \
+    packagegroup-robotics-qcnode \
 "
 
 ROOTFS_SYMLINK_PAIRS = "/usr/ros:/opt/ros"
