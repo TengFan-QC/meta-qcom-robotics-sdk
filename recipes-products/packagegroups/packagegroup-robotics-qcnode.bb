@@ -12,4 +12,6 @@ inherit rdepends-collector
 RDEPENDS:${PN} = " \
     qrb-contracts-proto \
     qcnode \
+    qrb-ros-adapter \
+    qrb-ros-adapter-stream-probe \
 "
