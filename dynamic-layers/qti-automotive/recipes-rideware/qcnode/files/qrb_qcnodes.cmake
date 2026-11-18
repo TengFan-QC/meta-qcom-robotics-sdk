@@ -1,8 +1,9 @@
 # Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
 # SPDX-License-Identifier: BSD-3-Clause-Clear
 #
-# Hook that builds the nodes from qrb_qcnodes as part of the qcnode build and
-# links them into libQCNode.so. qrb_contracts (buffer descriptors and protobuf
+# Hook that builds the nodes from qrb_qcnodes, and the IPC Adapter Node of
+# qrb_ros_adapter, as part of the qcnode build and links them into
+# libQCNode.so. qrb_contracts (buffer descriptors and protobuf
 # schemas) is built and installed from source as well.
 #
 # It is injected by qcnode_%.bbappend through
@@ -25,9 +26,10 @@ endif()
 # a qrb-contracts recipe depending on qcnode while qcnode depends on it would be
 # a circular dependency.
 #
-# The protobuf part is deliberately NOT linked into libQCNode.so (QCNode gets no
-# link dependency on qrb_contracts_proto); the nodes only see the header-only
-# descriptors. Downstream consumers link qrb_contracts::proto themselves.
+# The protobuf part is not built here and the qrb_qcnodes nodes only see the
+# header-only descriptors. The IPC Adapter Node of qrb_ros_adapter (below) does
+# link qrb_contracts_proto, from the qrb-contracts-proto recipe, through its IPC
+# runtime.
 if( QRB_CONTRACTS_SOURCE_DIR )
     if( NOT EXISTS ${QRB_CONTRACTS_SOURCE_DIR}/CMakeLists.txt )
         message( FATAL_ERROR "QRB_CONTRACTS_SOURCE_DIR is invalid: '${QRB_CONTRACTS_SOURCE_DIR}'" )
@@ -55,3 +57,19 @@ foreach( entry IN LISTS QRB_QCNODES_NODES )
             QCNode PUBLIC ${target} )
     " )
 endforeach()
+
+# The HCM IPC Adapter Node of qrb_ros_adapter, OBJECT library QCNodeIpcAdapter.
+# Its directory also adds SampleIpcAdapter, and the HCM side of the end-to-end
+# test (SampleStreamProbe with HcmStreamProbeNode), to QCNodeSample, and installs
+# the qrb_hcm_ipc_adapter CMake package (headers, and libQCNode.so as the
+# library).
+if( QRB_ROS_ADAPTER_SOURCE_DIR )
+    if( NOT EXISTS ${QRB_ROS_ADAPTER_SOURCE_DIR}/hcm_ipc_adapter/CMakeLists.txt )
+        message( FATAL_ERROR "QRB_ROS_ADAPTER_SOURCE_DIR is invalid: '${QRB_ROS_ADAPTER_SOURCE_DIR}'" )
+    endif()
+    message( STATUS "qrb_qcnodes: adding the IPC Adapter Node from ${QRB_ROS_ADAPTER_SOURCE_DIR}" )
+    add_subdirectory( ${QRB_ROS_ADAPTER_SOURCE_DIR}/hcm_ipc_adapter
+                      ${CMAKE_BINARY_DIR}/qrb_ros_adapter/hcm_ipc_adapter )
+    cmake_language( DEFER DIRECTORY ${CMAKE_SOURCE_DIR} CALL target_link_libraries
+        QCNode PUBLIC QCNodeIpcAdapter )
+endif()
