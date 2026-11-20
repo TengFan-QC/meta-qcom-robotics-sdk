@@ -23,7 +23,10 @@ ROS_BUILD_DEPENDS = " \
     builtin-interfaces \
     std-msgs \
     geometry-msgs \
+    nav-msgs \
     sensor-msgs \
+    tf2-msgs \
+    vision-msgs \
     qrb-ros-transport-point-cloud2-type \
     qrb-ros-adapter-runtime \
 "
@@ -38,7 +41,10 @@ ROS_EXPORT_DEPENDS = " \
     builtin-interfaces \
     std-msgs \
     geometry-msgs \
+    nav-msgs \
     sensor-msgs \
+    tf2-msgs \
+    vision-msgs \
     qrb-ros-transport-point-cloud2-type \
     qrb-ros-adapter-runtime \
 "
@@ -51,7 +57,10 @@ ROS_EXEC_DEPENDS = " \
     builtin-interfaces \
     std-msgs \
     geometry-msgs \
+    nav-msgs \
     sensor-msgs \
+    tf2-msgs \
+    vision-msgs \
     qrb-ros-transport-point-cloud2-type \
     qrb-ros-adapter-runtime \
     launch \
