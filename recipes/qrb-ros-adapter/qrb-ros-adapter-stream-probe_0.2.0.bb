@@ -22,7 +22,10 @@ ROS_BUILD_DEPENDS = " \
     rclcpp \
     rclcpp-components \
     geometry-msgs \
+    nav-msgs \
     sensor-msgs \
+    tf2-msgs \
+    vision-msgs \
     qrb-ros-transport-point-cloud2-type \
     qrb-ros-adapter \
     nlohmann-json \
@@ -41,7 +44,10 @@ ROS_EXEC_DEPENDS = " \
     rclcpp \
     rclcpp-components \
     geometry-msgs \
+    nav-msgs \
     sensor-msgs \
+    tf2-msgs \
+    vision-msgs \
     qrb-ros-transport-point-cloud2-type \
     qrb-ros-adapter \
     launch \
