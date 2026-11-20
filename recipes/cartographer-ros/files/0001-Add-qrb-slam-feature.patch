@@ -28,14 +28,14 @@ Signed-off-by: xiaohui kuo <quic_xkuo@quicinc.com>
  .../scripts/qrb_slam_service_request.sh       |  27 ++
  cartographer_ros/src/map_builder_bridge.cpp   | 107 +++++
  cartographer_ros/src/msg_conversion.cpp       |  51 ++-
- cartographer_ros/src/node.cpp                 | 418 +++++++++++++++++-
+ cartographer_ros/src/node.cpp                 | 450 +++++++++++++++++-
  cartographer_ros/src/node_main.cpp            |  42 +-
  cartographer_ros/src/node_options.cpp         |   4 +
  .../src/occupancy_grid_node_main.cpp          |  98 +++-
  cartographer_ros/src/ros_map.cpp              |  24 +-
  .../cartographer_rviz/drawable_submap.h       |  10 +-
  .../cartographer_rviz/submaps_display.h       |   2 +-
- 26 files changed, 1074 insertions(+), 138 deletions(-)
+ 26 files changed, 1104 insertions(+), 140 deletions(-)
  create mode 100644 cartographer_ros/configuration_files/qrb_amr_localization_2d.lua
  create mode 100644 cartographer_ros/configuration_files/qrb_amr_mapping_2d.lua
  create mode 100644 cartographer_ros/launch/qrb_2d_lidar_slam.launch.py
@@ -561,11 +561,11 @@ index 07a85f3..b11d45b 100644
  constexpr char kLandmarkPosesListTopic[] = "landmark_poses_list";
  constexpr char kConstraintListTopic[] = "constraint_list";
 +constexpr char kQrbDefaultConfigDirectory[] = "/opt/ros/jazzy/share/cartographer_ros/configuration_files";
-+constexpr char kQrbDefaultMapDir[] = "/opt/ros/jazzy/share/cartographer_ros/map";
++constexpr char kQrbDefaultMapDir[] = "/data/cartographer_ros/map";
 +constexpr char kQrbDefault2DMappingConfigName[] = "qrb_amr_mapping_2d.lua";
 +constexpr char kQrbDefault2DLocalizationConfigName[] = "qrb_amr_localization_2d.lua";
 +constexpr char kQrbSlamCommandServiceName[] = "qrb_slam_command";
-+constexpr char kQrbRigidOutputFile[] = "/opt/ros/jazzy/share/cartographer_ros/rigid3d_tf_pub.csv";
++constexpr char kQrbRigidOutputFile[] = "/data/cartographer_ros/rigid3d_tf_pub.csv";
  constexpr double kConstraintPublishPeriodSec = 0.5;
  constexpr double kTopicMismatchCheckDelaySec = 3.0;
  
@@ -1051,23 +1051,43 @@ diff --git a/cartographer_ros/src/node.cpp b/cartographer_ros/src/node.cpp
 index 813ae4b..14c273b 100644
 --- a/cartographer_ros/src/node.cpp
 +++ b/cartographer_ros/src/node.cpp
-@@ -19,6 +19,7 @@
+@@ -19,6 +19,8 @@
  #include <chrono>
  #include <string>
  #include <vector>
 +#include <filesystem>
++#include <system_error>
  
  #include "Eigen/Core"
  #include "absl/memory/memory.h"
-@@ -46,6 +47,7 @@
+@@ -46,7 +48,24 @@
  #include "sensor_msgs/msg/point_cloud2.hpp"
  #include "tf2_eigen/tf2_eigen.hpp"
  #include "visualization_msgs/msg/marker_array.hpp"
 +#include <pcl/console/time.h>
- 
+-
++
  namespace cartographer_ros {
- 
-@@ -96,6 +98,13 @@ Node::Node(
+-
++
++namespace {
++bool EnsureDirectoryExists(const std::filesystem::path& directory) {
++  if (directory.empty()) {
++    return true;
++  }
++  std::error_code ec;
++  std::filesystem::create_directories(directory, ec);
++  if (ec) {
++    LOG(ERROR) << "Failed to create directory: " << directory.string()
++               << ", error: " << ec.message();
++    return false;
++  }
++  return true;
++}
++}  // namespace
++
+ namespace carto = ::cartographer;
+@@ -96,6 +115,13 @@ Node::Node(
      : node_options_(node_options)
  {
    node_ = node;
@@ -1081,7 +1101,7 @@ index 813ae4b..14c273b 100644
    tf_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(node_) ;
    map_builder_bridge_.reset(new cartographer_ros::MapBuilderBridge(node_options_, std::move(map_builder), tf_buffer.get()));
  
-@@ -108,6 +117,9 @@ Node::Node(
+@@ -108,6 +134,9 @@ Node::Node(
    submap_list_publisher_ =
        node_->create_publisher<::cartographer_ros_msgs::msg::SubmapList>(
            kSubmapListTopic, 10);
@@ -1091,7 +1111,7 @@ index 813ae4b..14c273b 100644
    trajectory_node_list_publisher_ =
        node_->create_publisher<::visualization_msgs::msg::MarkerArray>(
            kTrajectoryNodeListTopic, 10);
-@@ -135,27 +147,10 @@ Node::Node(
+@@ -135,27 +164,10 @@ Node::Node(
        kTrajectoryQueryServiceName,
        std::bind(
            &Node::handleTrajectoryQuery, this, std::placeholders::_1, std::placeholders::_2));
@@ -1122,7 +1142,7 @@ index 813ae4b..14c273b 100644
  
    submap_list_timer_ = node_->create_wall_timer(
      std::chrono::milliseconds(int(node_options_.submap_publish_period_sec * 1000)),
-@@ -186,7 +181,12 @@ Node::Node(
+@@ -186,7 +198,12 @@ Node::Node(
      });
  }
  
@@ -1136,7 +1156,7 @@ index 813ae4b..14c273b 100644
  
  bool Node::handleSubmapQuery(
      const cartographer_ros_msgs::srv::SubmapQuery::Request::SharedPtr request,
-@@ -216,6 +216,8 @@ bool Node::handleTrajectoryQuery(
+@@ -216,6 +233,8 @@ bool Node::handleTrajectoryQuery(
  void Node::PublishSubmapList() {
    absl::MutexLock lock(&mutex_);
    submap_list_publisher_->publish(map_builder_bridge_->GetSubmapList(node_->now()));
@@ -1145,7 +1165,7 @@ index 813ae4b..14c273b 100644
  }
  
  void Node::AddExtrapolator(const int trajectory_id,
-@@ -349,6 +351,27 @@ void Node::PublishLocalTrajectoryData() {
+@@ -349,6 +368,27 @@ void Node::PublishLocalTrajectoryData() {
          pose_msg.pose = ToGeometryMsgPose(tracking_to_map);
          tracked_pose_publisher_->publish(pose_msg);
        }
@@ -1173,7 +1193,7 @@ index 813ae4b..14c273b 100644
      }
    }
  }
-@@ -641,6 +664,234 @@ void Node::StartTrajectoryWithDefaultTopics(const TrajectoryOptions& options) {
+@@ -641,6 +681,242 @@ void Node::StartTrajectoryWithDefaultTopics(const TrajectoryOptions& options) {
    AddTrajectory(options);
  }
  
@@ -1241,6 +1261,14 @@ index 813ae4b..14c273b 100644
 +qrb_ros_slam_msgs::msg::CommandResponse Node::SaveMap() {
 +  qrb_ros_slam_msgs::msg::CommandResponse command_response;
 +  command_response.result = true;
++  if (!EnsureDirectoryExists(kQrbDefaultMapDir)) {
++    command_response.result = false;
++    command_response.code =
++        qrb_ros_slam_msgs::msg::StatusCode::RESOURCE_EXHAUSTED;
++    command_response.message =
++        "Failed to create map directory. Check storage and permissions.";
++    return command_response;
++  }
 +
 +  std::string map_base_name;
 +  map_base_name = std::string(kQrbDefaultMapDir) + "/map_0";
@@ -1408,7 +1436,7 @@ index 813ae4b..14c273b 100644
  std::vector<
      std::set<cartographer::mapping::TrajectoryBuilderInterface::SensorId>>
  Node::ComputeDefaultSensorIdsForMultipleBags(
-@@ -748,6 +999,47 @@ bool Node::handleReadMetrics(
+@@ -748,6 +1024,47 @@ bool Node::handleReadMetrics(
    return true;
  }
  
@@ -1456,7 +1484,7 @@ index 813ae4b..14c273b 100644
  void Node::FinishAllTrajectories() {
    absl::MutexLock lock(&mutex_);
    for (const auto& entry : map_builder_bridge_->GetTrajectoryStates()) {
-@@ -792,6 +1084,17 @@ void Node::HandleOdometryMessage(const int trajectory_id,
+@@ -792,6 +1109,17 @@ void Node::HandleOdometryMessage(const int trajectory_id,
    if (!sensor_samplers_.at(trajectory_id).odometry_sampler.Pulse()) {
      return;
    }
@@ -1474,7 +1502,7 @@ index 813ae4b..14c273b 100644
    auto sensor_bridge_ptr = map_builder_bridge_->sensor_bridge(trajectory_id);
    auto odometry_data_ptr = sensor_bridge_ptr->ToOdometryData(msg);
    if (odometry_data_ptr != nullptr) {
-@@ -884,6 +1187,79 @@ void Node::LoadState(const std::string& state_filename,
+@@ -884,6 +1212,82 @@ void Node::LoadState(const std::string& state_filename,
    map_builder_bridge_->LoadState(state_filename, load_frozen_state);
  }
  
@@ -1537,6 +1565,9 @@ index 813ae4b..14c273b 100644
 +}
 +
 +bool Node::CreatFileIfNotExist(const std::string &file_name) {
++  if (!EnsureDirectoryExists(std::filesystem::path(file_name).parent_path())) {
++    return false;
++  }
 +  if (!std::filesystem::exists(file_name))
 +  {
 +    std::ofstream create_file(file_name);
