@@ -43,8 +43,9 @@ endif()
 
 # One entry per node directory under qrb_qcnodes/source/Node, as
 # <directory>:<OBJECT library target>. Add new nodes (Imu, Lidar, ...) here once
-# they are wired into the upstream tree.
-set( QRB_QCNODES_NODES demo:QCNodeDemo )
+# they are wired into the upstream tree. The RealSense node needs librealsense2
+# (DEPENDS of the bbappend) and adds its sample (-t RealSense) to QCNodeSample
+set( QRB_QCNODES_NODES demo:QCNodeDemo realsense:QCNodeRealSense )
 
 foreach( entry IN LISTS QRB_QCNODES_NODES )
     string( REPLACE ":" ";" entry ${entry} )
