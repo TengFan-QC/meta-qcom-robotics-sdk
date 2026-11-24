@@ -12,6 +12,9 @@
 # QCNode sample application (qcrun QCNodeSampleApp -t IpcAdapter). The rest of
 # qrb_ros_adapter (IPC runtime, ROS IPC Bridge) stays in separate recipes.
 #
+# The RealSense node of qrb_qcnodes links librealsense2 (the librealsense2 recipe of
+# recipes/realsense2-camera, the same library the realsense2-camera ROS node uses).
+#
 # qcnode itself is not patched: qrb_qcnodes.cmake is injected through
 # CMAKE_PROJECT_qcnode_INCLUDE and adds the node directories from the
 # qrb_qcnodes and qrb_ros_adapter checkouts to the qcnode build.
@@ -40,6 +43,10 @@ SRCREV_qrb-ros-adapter = "${AUTOREV}"
 # The IPC Adapter Node links the IPC runtime of qrb_ros_adapter (and through it
 # protobuf and qrb_contracts_proto) into libQCNode.so.
 DEPENDS += "qrb-ros-adapter-runtime protobuf nlohmann-json"
+
+# The RealSense node of qrb_qcnodes builds against the headers and the library of the
+# librealsense2 recipe (recipes/realsense2-camera), and links it into libQCNode.so.
+DEPENDS += "librealsense2"
 
 EXTRA_OECMAKE += "\
     -DCMAKE_PROJECT_qcnode_INCLUDE=${UNPACKDIR}/qrb_qcnodes.cmake \
