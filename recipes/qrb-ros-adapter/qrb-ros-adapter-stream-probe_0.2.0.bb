@@ -27,6 +27,7 @@ ROS_BUILD_DEPENDS = " \
     tf2-msgs \
     vision-msgs \
     qrb-ros-transport-point-cloud2-type \
+    qrb-ros-transport-image-type \
     qrb-ros-adapter \
     nlohmann-json \
 "
@@ -49,6 +50,7 @@ ROS_EXEC_DEPENDS = " \
     tf2-msgs \
     vision-msgs \
     qrb-ros-transport-point-cloud2-type \
+    qrb-ros-transport-image-type \
     qrb-ros-adapter \
     launch \
     launch-ros \
