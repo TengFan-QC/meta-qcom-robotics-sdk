@@ -6,8 +6,8 @@ ROS_BUILD_TYPE = "ament_cmake"
 inherit ros_${ROS_BUILD_TYPE}
 inherit robotics-package
 
-SRC_URI  = "git://github.com/qualcomm-qrb-ros/qrb_ros_tensor_process.git;protocol=https;branch=stable/1.1.0"
-SRCREV   = "6e5d64cda46e38a0b9536c1fe059b29ed97bd8b1"
+SRC_URI  = "git://github.com/qualcomm-qrb-ros/qrb_ros_tensor_process.git;protocol=https;branch=dev/robot-iq10"
+SRCREV   = "${AUTOREV}"
 S = "${UNPACKDIR}/${BPN}-${PV}/cv_tensor_process/cv_tensor_common_process"
 
 DESCRIPTION = "QRB ROS CV tensor common process node"
@@ -15,7 +15,7 @@ AUTHOR = "Xiao Li <xiaolee@qti.qualcomm.com>"
 ROS_AUTHOR = "Xiao Li"
 SECTION = "devel"
 LICENSE = "BSD-3-Clause"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=65b8cd575e75211d9d4ca8603167da1c"
+LIC_FILES_CHKSUM = "file://${UNPACKDIR}/${BPN}-${PV}/LICENSE;md5=65b8cd575e75211d9d4ca8603167da1c"
 
 ROS_CN = "qrb_ros_cv_tensor_common_process"
 ROS_BPN = "qrb_ros_cv_tensor_common_process"

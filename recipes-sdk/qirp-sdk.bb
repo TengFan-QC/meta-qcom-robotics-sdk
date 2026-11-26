@@ -47,10 +47,3 @@ do_install() {
     install -d ${D}/usr/share
     install -m 0755 ${UNPACKDIR}/qirp-setup.sh ${D}/usr/share/qirp-setup.sh
 }
-
-do_lic_install() {
-    install -d ${LICENSE_DIRECTORY}/${SSTATE_PKGARCH}/${PN}
-    install -m 0644 ${COMMON_LICENSE_DIR}/BSD-3-Clause-Clear \
-        ${LICENSE_DIRECTORY}/${SSTATE_PKGARCH}/${PN}/generic_BSD-3-Clause-Clear
-}
-addtask lic_install after do_install before do_package

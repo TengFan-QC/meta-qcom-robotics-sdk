@@ -1,0 +1,52 @@
+From 524031fd7be789c688309b28585660fdbf9970c7 Mon Sep 17 00:00:00 2001
+From: chenghen <chenghen@qti.qualcomm.com>
+Date: Mon, 16 Nov 2026 11:36:12 +0800
+Subject: [PATCH] Fix build with newer asio
+
+io_context::reset() and io_context::post() were removed from recent asio
+releases (e.g. 1.36). Use io_context::restart() and asio::post() instead.
+---
+ src/async_port/async_can.cpp    | 2 +-
+ src/async_port/async_serial.cpp | 6 +++---
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/async_port/async_can.cpp b/src/async_port/async_can.cpp
+index b04d012..cb97cbd 100644
+--- a/src/async_port/async_can.cpp
++++ b/src/async_port/async_can.cpp
+@@ -84,7 +84,7 @@ bool AsyncCAN::Open() {
+ void AsyncCAN::Close() {
+   io_context_.stop();
+   if (io_thread_.joinable()) io_thread_.join();
+-  io_context_.reset();
++  io_context_.restart();
+   
+   // release port fd
+   const int close_result = ::close(can_fd_);
+diff --git a/src/async_port/async_serial.cpp b/src/async_port/async_serial.cpp
+index d224452..07c12a4 100644
+--- a/src/async_port/async_serial.cpp
++++ b/src/async_port/async_serial.cpp
+@@ -78,7 +78,7 @@ bool AsyncSerial::Open() {
+ void AsyncSerial::Close() {
+   io_context_.stop();
+   if (io_thread_.joinable()) io_thread_.join();
+-  io_context_.reset();
++  io_context_.restart();
+   
+   if (IsOpened()) {
+     serial_port_.cancel();
+@@ -154,7 +154,7 @@ void AsyncSerial::SendBytes(const uint8_t *bytes, size_t length) {
+         "data");
+   }
+   tx_rbuf_.Write(bytes, length);
+-  io_context_.post(
+-      std::bind(&AsyncSerial::WriteToPort, shared_from_this(), true));
++  asio::post(io_context_,
++             std::bind(&AsyncSerial::WriteToPort, shared_from_this(), true));
+ }
+ }  // namespace westonrobot
+\ No newline at end of file
+-- 
+2.43.0
+

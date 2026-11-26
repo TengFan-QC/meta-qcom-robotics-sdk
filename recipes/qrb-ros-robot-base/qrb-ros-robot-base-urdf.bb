@@ -33,11 +33,11 @@ DEPENDS += "${ROS_EXPORT_DEPENDS} ${ROS_BUILDTOOL_EXPORT_DEPENDS}"
 # convert ROS_EXEC_DEPENDS to Yocto RDEPENDS
 RDEPENDS:${PN} += "${ROS_EXEC_DEPENDS}"
 
-SRC_URI = "git://github.com/qualcomm-qrb-ros/qrb_ros_robot_base.git;protocol=https;branch=main \
+SRC_URI = "git://github.com/qualcomm-qrb-ros/qrb_ros_robot_base.git;protocol=https;branch=dev/robot-iq10 \
 "
 S = "${UNPACKDIR}/${BP}/qrb_ros_robot_base_urdf"
 
-SRCREV = "3b71c18c5a64d6b1e147501e1d7677f4ae62baa3"
+SRCREV = "${AUTOREV}"
 
 FILES:${PN}:prepend = "${datadir}/*"
 
