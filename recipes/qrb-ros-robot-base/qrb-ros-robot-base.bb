@@ -48,11 +48,11 @@ DEPENDS += "${ROS_EXPORT_DEPENDS} ${ROS_BUILDTOOL_EXPORT_DEPENDS}"
 
 RDEPENDS:${PN} += "${ROS_EXEC_DEPENDS}"
 
-SRC_URI = "git://github.com/qualcomm-qrb-ros/qrb_ros_robot_base.git;protocol=https;branch=main \
+SRC_URI = "git://github.com/qualcomm-qrb-ros/qrb_ros_robot_base.git;protocol=https;branch=dev/robot-iq10 \
 "
 S = "${UNPACKDIR}/${BP}/qrb_ros_robot_base"
 
-SRCREV = "3b71c18c5a64d6b1e147501e1d7677f4ae62baa3"
+SRCREV = "${AUTOREV}"
 
 # define the build type : ament_cmake, ament_python, cmake etc...
 ROS_BUILD_TYPE = "ament_cmake"

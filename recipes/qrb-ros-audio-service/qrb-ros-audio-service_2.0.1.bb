@@ -41,8 +41,8 @@ DEPENDS += "${ROS_EXPORT_DEPENDS} ${ROS_BUILDTOOL_EXPORT_DEPENDS}"
 
 RDEPENDS:${PN} += "${ROS_EXEC_DEPENDS}"
 
-SRC_URI = "git://github.com/quic-qrb-ros/qrb_ros_audio_service.git;protocol=https;branch=stable/2.0.1"
-SRCREV = "32c4bb2d38954f2671a1eba8cf85b01f437f2943"
+SRC_URI = "git://github.com/quic-qrb-ros/qrb_ros_audio_service.git;protocol=https;branch=dev/robot-iq10"
+SRCREV = "${AUTOREV}"
 S = "${UNPACKDIR}/${BP}/qrb_ros_audio_service"
 PV = "2.0.1"
 

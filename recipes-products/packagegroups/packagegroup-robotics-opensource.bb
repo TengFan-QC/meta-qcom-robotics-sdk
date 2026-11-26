@@ -14,6 +14,11 @@ PACKAGE_ARCH = "${MACHINE_ARCH}"
 inherit packagegroup
 inherit rdepends-collector
 
+# Robotics SDK core components shared across platforms.
+ROBOTICS_SDK_CORE = " \
+    plugin-discovery \
+"
+
 # If it is robotics feature, Please place all of them under this variable.
 # About qualcomm-qrb-ros information, Please refer to https://github.com/qualcomm-qrb-ros.
 QUALCOMM_QRB_ROS = " \
@@ -63,9 +68,14 @@ EXTERNAL_OPENSOURCE = " \
     rplidar-ros2 \
     orbbec-camera \
     xsens-mti-ros2-driver \
+    livox-ros-driver2 \
+    ranger-ros2 \
     cartographer \
     cartographer-ros \
     nav2-bringup \
+    librealsense2 \
+    realsense2-camera-msgs \
+    realsense2-camera \
 "
 
 ROS_GST_BRIDGE = " \
@@ -82,6 +92,7 @@ ROBOTICS_REQUIRED_TOOLS = " \
 "
 
 RDEPENDS:${PN} = "           \
+    ${ROBOTICS_SDK_CORE}     \
     ${QUALCOMM_QRB_ROS}      \
     ${QRB_ROS_SAMPLE}        \
     ${EXTERNAL_OPENSOURCE}   \
